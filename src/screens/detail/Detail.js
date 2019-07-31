@@ -2,8 +2,31 @@ import React, { Component } from 'react'
 import { Image, ScrollView } from 'react-native'
 import { Container, H1, Text, Badge, Col, Row, Button } from 'native-base'
 
-export default class Detail extends Component {
+import { connect } from 'react-redux'
+import { detailBook } from '../../public/redux/actions/book'
+
+class Detail extends Component {
+
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            books: []
+        }
+    }
+
+    componentDidMount = async () => {
+        await this.props.dispatch(detailBook(this.props.navigation.getParam('bookid')))
+        this.setState({
+            books: this.props.books
+        })
+    }
+
     render() {
+        const { books } = this.state
+        console.warn(books)
+
+        let detail = books
         return (
             <ScrollView>
                 <Container
@@ -11,7 +34,7 @@ export default class Detail extends Component {
                         marginBottom: 900
                     }}>
                     <Image
-                        source={{ uri: 'https://images.unsplash.com/photo-1507546530-14a03f8d180a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=295&q=80' }}
+                        source={{ uri: `${detail.image}` }}
                         style={{
                             width: '100%',
                             height: 200
@@ -32,7 +55,7 @@ export default class Detail extends Component {
                             borderRadius: 20
                         }}>
                         <Image
-                            source={{ uri: 'https://images.unsplash.com/photo-1507546530-14a03f8d180a?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=295&q=80' }}
+                            source={{ uri: `${detail.image}` }}
                             style={{
                                 width: 150,
                                 height: 200,
@@ -44,22 +67,48 @@ export default class Detail extends Component {
                             marginVertical: 120,
                             marginHorizontal: 10
                         }}>
-                        <H1>Title Book</H1>
+                        <H1>{detail.title}</H1>
                         <Row
                             style={{
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                marginTop: 20
+                                marginTop: 50
                             }}>
-                            <Col><Badge success><Text>Category</Text></Badge></Col>
-                            <Col><Badge primary><Text>Location</Text></Badge></Col>
-                            <Col><Badge danger><Text>Status</Text></Badge></Col>
+                            <Col><Text>Category:</Text></Col>
+                            <Col><Badge success style={{ marginLeft: 'auto' }}><Text>{detail.category}</Text></Badge></Col>
+                        </Row>
+                        <Row
+                            style={{
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginTop: 50
+                            }}>
+                            <Col><Text>Location:</Text></Col>
+                            <Col><Badge primary style={{ marginLeft: 'auto' }}><Text>{detail.location}</Text></Badge></Col>
+                        </Row>
+                        <Row
+                            style={{
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginTop: 50
+                            }}>
+                            <Col><Text>Status:</Text></Col>
+                            <Col><Badge danger style={{ marginLeft: 'auto' }}><Text>{detail.status}</Text></Badge></Col>
+                        </Row>
+                        <Row
+                            style={{
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                marginTop: 50
+                            }}>
+                            <Col><Text>Writer:</Text></Col>
+                            <Col><Badge info style={{ marginLeft: 'auto' }} ><Text>{detail.writer}</Text></Badge></Col>
                         </Row>
                         <Row>
                             <Col>
                                 <Button
                                     rounded
-                                    success
+                                    warning
                                     style={{ alignItems: 'center', justifyContent: 'center', marginTop: 30 }}>
                                     <Text
                                         style={{
@@ -77,10 +126,20 @@ export default class Detail extends Component {
                                 textAlign: 'justify',
                                 justifyContent: 'center',
                                 marginTop: 100
-                            }}>Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk menjadi sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Ia mulai dipopulerkan pada tahun 1960 dengan diluncurkannya lembaran-lembaran Letraset yang menggunakan kalimat-kalimat dari Lorem Ipsum, dan seiring munculnya perangkat lunak Desktop Publishing seperti Aldus PageMaker juga memiliki versi Lorem Ipsum.Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk menjadi sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Ia mulai dipopulerkan pada tahun 1960 dengan diluncurkannya lembaran-lembaran Letraset yang menggunakan kalimat-kalimat dari Lorem Ipsum, dan seiring munculnya perangkat lunak Desktop Publishing seperti Aldus PageMaker juga memiliki versi Lorem Ipsum.Lorem Ipsum adalah contoh teks atau dummy dalam industri percetakan dan penataan huruf atau typesetting. Lorem Ipsum telah menjadi standar contoh teks sejak tahun 1500an, saat seorang tukang cetak yang tidak dikenal mengambil sebuah kumpulan teks dan mengacaknya untuk menjadi sebuah buku contoh huruf. Ia tidak hanya bertahan selama 5 abad, tapi juga telah beralih ke penataan huruf elektronik, tanpa ada perubahan apapun. Ia mulai dipopulerkan pada tahun 1960 dengan diluncurkannya lembaran-lembaran Letraset yang menggunakan kalimat-kalimat dari Lorem Ipsum, dan seiring munculnya perangkat lunak Desktop Publishing seperti Aldus PageMaker juga memiliki versi Lorem Ipsum.</Text>
+                            }}>
+                            {detail.description}
+                        </Text>
                     </Container>
                 </Container>
             </ScrollView >
         )
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        books: state.book.bookList
+    }
+}
+
+export default connect(mapStateToProps)(Detail)

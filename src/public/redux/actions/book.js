@@ -13,3 +13,10 @@ export const searchBook = (search) => {
         payload: axios.get(`https://api-libraryku.herokuapp.com/books?${search}`)
     }
 }
+
+export const detailBook = (bookid) => {
+    return {
+        type: 'DETAIL_BOOK',
+        payload: axios.get(`https://api-libraryku.herokuapp.com/books/${bookid}`)
+    }
+}

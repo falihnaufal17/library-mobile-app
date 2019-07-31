@@ -1,11 +1,11 @@
 import { combineReducers } from 'redux'
 
 //import all reducers
-import books from './book'
+import book from './book'
 
 //combine them
 const appReducer = combineReducers({
-    books
+    book
 })
 
 export default appReducer
