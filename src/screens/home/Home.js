@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import Navbar from '../../public/components/navbar'
 import { ScrollView, Image } from 'react-native'
-import { Input, Item, Card, CardItem, Body, Text, View, Row, Col } from 'native-base';
+import { Input, Item, Card, CardItem, Body, Text, View, Row, Col, Icon } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 export default class Home extends Component {
     constructor(props) {
@@ -20,13 +20,14 @@ export default class Home extends Component {
                 <ScrollView>
                     <View style={{
                         marginHorizontal: 20,
-                        marginTop: 30
+                        marginTop: 10
                     }}>
                         <Item rounded style={{
                             marginVertical: 30
                         }}>
+                            <Icon name='search' style={{ paddingLeft: 20 }} />
                             <Input placeholder='Search Book...' style={{
-                                paddingLeft: 20
+                                paddingLeft: 10
                             }} />
                         </Item>
                     </View>

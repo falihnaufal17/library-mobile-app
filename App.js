@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-
-import Navbar from './src/public/components/navbar'
 import MainNavigator from './src/public/navigators/MainNavigator';
 import Splash from './src/screens/splash/splash';
+
+import { Provider } from 'react-redux'
+import store from './src/public/redux/store'
 
 export default class App extends Component {
   constructor(props) {
@@ -15,9 +16,11 @@ export default class App extends Component {
 
     setTimeout(() => {
       this.setState({
-        view: [<MainNavigator />]
+        view: <Provider store={store}>
+          <MainNavigator />
+        </Provider>
       })
-    }, 3000)
+    }, 2500)
   }
   render() {
     return (

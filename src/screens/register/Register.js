@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
+import { Image, StyleSheet, ScrollView } from 'react-native'
 import { Form, Item, Label, Input, Button, Text, Card, CardItem, Container, Content } from 'native-base'
 
 export default class Register extends Component {
     render() {
         return (
-            <Container>
-                <Content>
+            <Container style={styles.container}>
+                <ScrollView showsHorizontalScrollIndicator={false}>
+                    <Image source={require('../../assets/logo/logo.png')} style={styles.imgCenter} />
                     <Card>
                         <CardItem header style={{
                             alignItems: 'center',
@@ -52,8 +54,22 @@ export default class Register extends Component {
                             </Button>
                         </Form>
                     </Card>
-                </Content>
+                </ScrollView>
             </Container>
         )
     }
 }
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        marginHorizontal: 20,
+        marginVertical: 20
+    },
+    imgCenter: {
+        width: 250,
+        height: 100,
+    }
+})
