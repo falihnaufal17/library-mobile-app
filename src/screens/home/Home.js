@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { TouchableOpacity, Image, Modal } from 'react-native'
+import { TouchableOpacity, Image, Modal, AsyncStorage as storage } from 'react-native'
 import { Input, Item, Card, CardItem, View, Icon, Fab, H1, Picker, Button, Text, Toast } from 'native-base';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import Navbar from '../../public/components/navbar'
 
 //import redux
 import { connect } from 'react-redux'
@@ -29,9 +30,37 @@ class Home extends Component {
             locationid: 1,
             statusid: 1,
 
+            name: '',
+            iduser: '',
+            status: '',
+
             selected: undefined,
             showToast: false
         }
+
+        storage.getItem('name', (error, result) => {
+            if (result) {
+                this.setState({
+                    name: result
+                })
+            }
+        })
+
+        storage.getItem('iduser', (error, result) => {
+            if (result) {
+                this.setState({
+                    iduser: result
+                })
+            }
+        })
+
+        storage.getItem('status', (error, result) => {
+            if (result) {
+                this.setState({
+                    status: result
+                })
+            }
+        })
     }
 
     onValueChange(value) {
@@ -172,10 +201,10 @@ class Home extends Component {
         console.warn("Status buku: " + stat)
         return (
             <>
+                <Navbar iduser={this.state.iduser} status={this.state.status} name={this.state.name} />
                 <ScrollView
                     showsVerticalScrollIndicator={false}
                 >
-                    {/* <Navbar /> */}
                     <View style={{
                         marginHorizontal: 20,
                         marginTop: 10
