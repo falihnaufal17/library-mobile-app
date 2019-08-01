@@ -13,10 +13,9 @@ export default class App extends Component {
     super(props)
 
     this.state = {
-      token: '',
-      iduser: ''
+      iduser: '',
+      token: ''
     }
-
     storage.getItem('token', (error, result) => {
       if (result) {
         this.setState({
@@ -35,7 +34,7 @@ export default class App extends Component {
   }
   componentWillMount() {
     this.state = {
-      view: <Splash />
+      view: <Splash />,
     }
 
     setTimeout(() => {
@@ -47,11 +46,9 @@ export default class App extends Component {
     }, 2500)
   }
   render() {
-
-    const { token, iduser } = this.state
     axios.defaults.headers.common['authorization'] = 'x-control-app'
-    axios.defaults.headers.common['x-access-token'] = token
-    axios.defaults.headers.common['x-control-user'] = iduser
+    axios.defaults.headers.common['x-access-token'] = 'bearer ' + this.state.token
+    axios.defaults.headers.common['x-control-user'] = this.state.iduser
 
     return (
       <>
