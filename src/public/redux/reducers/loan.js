@@ -27,6 +27,26 @@ export default loan = (state = initialState, action) => {
                 isFulFilled: true,
                 loanList: [...state.loanList, action.payload.data[0]]
             }
+        case 'GET_LOANBYUSER_PENDING':
+            return {
+                ...state,
+                isLoading: true,
+                isRejected: false,
+                isFulFilled: false
+            }
+        case 'GET_LOANBYUSER_REJECTED':
+            return {
+                ...state,
+                isLoading: false,
+                isRejected: true,
+            }
+        case 'GET_LOANBYUSER_FULFILLED':
+            return {
+                ...state,
+                isLoading: false,
+                isFulFilled: true,
+                loanList: action.payload.data.result
+            }
         default:
             return state
     }

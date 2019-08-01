@@ -1,13 +1,14 @@
 import React, { Component } from 'react'
 import { Image, ScrollView, AsyncStorage as storage } from 'react-native'
-import { Card, CardItem, Text, Row, Col, View, H3, Badge, Button, Icon, Toast } from 'native-base'
+import { Card, CardItem, Text, Row, Col, View, H3, Badge, Icon, Toast, Content, Accordion, Thumbnail } from 'native-base'
 import Navbar from '../../public/components/navbar';
 import { withNavigation } from 'react-navigation'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 //import redux
 import { connect } from 'react-redux'
 import { logout } from '../../public/redux/actions/user'
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { getLoanByUser } from '../../public/redux/actions/loan'
 
 class Profile extends Component {
 
@@ -15,7 +16,7 @@ class Profile extends Component {
         super(props)
 
         this.state = {
-            loan: [],
+            loans: [],
             users: [],
             isverify: '',
             id_card: '',
@@ -74,6 +75,51 @@ class Profile extends Component {
         })
     }
 
+    componentDidMount = async () => {
+        await this.props.dispatch(getLoanByUser(this.props.navigation.getParam('iduser')))
+        this.setState({
+            loans: this.props.loans
+        })
+    }
+
+    formatDate(date) {
+        let data = Date.parse(date);
+        let newDate = new Date(data);
+        let day = newDate.getDate();
+        let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        let month = months[newDate.getMonth()];
+        let year = newDate.getFullYear();
+        return `${day} ${month} ${year}`
+    }
+    _renderContent(item) {
+        return (
+            <View style={{ marginHorizontal: 10 }}>
+                <Row>
+                    <Col><Thumbnail source={{ uri: item.image }} square large /></Col>
+                    <Col>
+                        <Row>
+                            <Col><Text>Loaning date: </Text></Col>
+                            <Col><Text>{item.created_at}</Text></Col>
+                        </Row>
+                        <Row>
+                            <Col><Text>Expired date: </Text></Col>
+                            <Col><Text>{item.expired_date}</Text></Col>
+                        </Row>
+                        <Row>
+                            <Col><Text>Forfeit: </Text></Col>
+                            <Col><Text>{item.forfeit}</Text></Col>
+                        </Row>
+                        <Row>
+                            <Col><Text>Is Return: </Text></Col>
+                            <Col><Text>{item.isverify}</Text></Col>
+                        </Row>
+                    </Col>
+                </Row>
+
+            </View>
+        );
+    }
+
     logout = async () => {
         await this.props.dispatch(logout(this.state.iduser))
             .then(() => {
@@ -100,6 +146,8 @@ class Profile extends Component {
     }
 
     render() {
+        const { loans } = this.state
+        console.warn(loans)
         console.warn(this.state.id_card)
         return (
             <>
@@ -118,7 +166,7 @@ class Profile extends Component {
                                                 ?
                                                 <Badge success style={{ marginLeft: 'auto' }}><Text style={{ textAlign: 'right' }}>Vierified <Icon name='check' style={{ color: 'white', fontSize: 12 }} type='FontAwesome5' /></Text></Badge>
                                                 :
-                                                <Badge danger style={{ marginLeft: 'auto' }}><Text style={{ textAlign: 'right' }}>Not Verified <Icon name='close' style={{ color: 'white', fontSize: 12 }} type='FontAwesome5' /></Text></Badge>
+                                                <Badge danger style={{ marginLeft: 'auto' }}><Text style={{ textAlign: 'right' }}>Not Verified <Icon name='close-circle' style={{ color: 'white', fontSize: 12 }} /></Text></Badge>
                                         }
                                     </Col>
                                 </Row>
@@ -169,6 +217,21 @@ class Profile extends Component {
                             </CardItem>
                         </Card>
                     </View>
+                    <Content padder style={{ backgroundColor: 'white', marginHorizontal: 20 }}>
+                        <H3 style={{ marginVertical: 10 }}>History pinjaman:</H3>
+                        {
+                            this.state.loans &&
+                                this.state.iduser && this.state.status === "1"
+                                ?
+                                <Accordion
+                                    dataArray={this.state.loans}
+                                    expanded={true}
+                                    renderContent={this._renderContent} />
+                                :
+                                <Text style={{ justifyContent: 'center', alignItems: 'center' }}>Oops kamu belum pinjam buku</Text>
+                        }
+
+                    </Content>
                 </ScrollView>
             </>
         )
@@ -177,7 +240,8 @@ class Profile extends Component {
 
 const mapStateToProps = state => {
     return {
-        users: state.user.userList
+        users: state.user.userList,
+        loans: state.loan.loanList
     }
 }
 

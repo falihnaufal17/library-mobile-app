@@ -7,3 +7,10 @@ export const addLoan = (data) => {
         payload: axios.post(`${ApiUrl}/loaning`, data)
     }
 }
+
+export const getLoanByUser = (iduser) => {
+    return {
+        type: 'GET_LOANBYUSER',
+        payload: axios.get(`${ApiUrl}/loaning/users/${iduser}`)
+    }
+}
