@@ -4,7 +4,7 @@ import Splash from './src/screens/splash/splash';
 
 import { Provider } from 'react-redux'
 import store from './src/public/redux/store'
-import axios from 'axios';
+import { Root } from 'native-base'
 
 export default class App extends Component {
   constructor(props) {
@@ -17,7 +17,9 @@ export default class App extends Component {
 
     setTimeout(() => {
       this.setState({
-        view: <MainNavigator />
+        view:
+          <Root><MainNavigator />
+          </Root>
       })
     }, 2500)
   }

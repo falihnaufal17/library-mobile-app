@@ -47,6 +47,26 @@ export default book = (state = initialState, action) => {
                 isFulFilled: true,
                 bookList: action.payload.data.result
             }
+        case 'ADD_BOOK_PENDING':
+            return {
+                ...state,
+                isLoading: true,
+                isRejected: false,
+                isFulFilled: false
+            }
+        case 'ADD_BOOK_REJECTED':
+            return {
+                ...state,
+                isLoading: false,
+                isRejected: true
+            }
+        case 'ADD_BOOK_FULFILLED':
+            return {
+                ...state,
+                isLoading: false,
+                isFulFilled: true,
+                bookList: [...state.bookList, action.payload.data[0]]
+            }
         default:
             return state
     }
