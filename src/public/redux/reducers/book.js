@@ -27,6 +27,26 @@ export default book = (state = initialState, action) => {
                 isFulFilled: true,
                 bookList: action.payload.data.result
             }
+        case 'GET_MOREBOOKS_PENDING':
+            return {
+                ...state,
+                isLoading: true,
+                isRejected: false,
+                isFulFilled: false
+            }
+        case 'GET_MOREBOOKS_REJECTED':
+            return {
+                ...state,
+                isLoading: false,
+                isRejected: true
+            }
+        case 'GET_MOREBOOKS_FULFILLED':
+            return {
+                ...state,
+                isLoading: false,
+                isFulFilled: true,
+                bookList: action.payload.data.result
+            }
         case 'DETAIL_BOOK_PENDING':
             return {
                 ...state,

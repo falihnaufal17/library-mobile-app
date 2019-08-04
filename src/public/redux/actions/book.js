@@ -1,10 +1,17 @@
 import axios from 'axios'
 let ApiUrl = `https://api-libraryku.herokuapp.com`
 
-export const getBooks = (search = '') => {
+export const getBooks = () => {
     return {
         type: 'GET_BOOKS',
-        payload: axios.get(`${ApiUrl}/books?search=${search}`)
+        payload: axios.get(`${ApiUrl}/books`)
+    }
+}
+
+export const getMoreBooks = (page) => {
+    return {
+        type: 'GET_MOREBOOKS',
+        payload: axios.get(`${ApiUrl}/books?page=${page}`)
     }
 }
 

@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
-import { TouchableOpacity, Image, View, Modal, AsyncStorage as storage, } from 'react-native'
+import { TouchableOpacity, Image, View, Modal, AsyncStorage as storage, ActivityIndicator, FlatList } from 'react-native'
 import { Input, Item, Card, CardItem, Icon, Fab, H1, Picker, Button, Text, Toast, Row, Col, Thumbnail } from 'native-base';
-import { FlatList, ScrollView } from 'react-native-gesture-handler';
+import { ScrollView } from 'react-native-gesture-handler';
 import Navbar from '../../public/components/navbar'
 import ImagePicker from 'react-native-image-picker'
 
 //import redux
 import { connect } from 'react-redux'
-import { getBooks, addBook } from '../../public/redux/actions/book'
+import { addBook, getMoreBooks } from '../../public/redux/actions/book'
 import { getCategories } from '../../public/redux/actions/category'
 import { getLocations } from '../../public/redux/actions/location'
 import { getStatus } from '../../public/redux/actions/status'
@@ -22,6 +22,8 @@ class Home extends Component {
             locations: [],
             statuses: [],
             modalVisible: false,
+            page: 1,
+            isLoading: true,
             search: '',
 
             title: '',
@@ -78,16 +80,49 @@ class Home extends Component {
     }
 
     componentDidMount = async () => {
-        await this.props.dispatch(getBooks(this.state.search))
+        this.makeRequest()
         await this.props.dispatch(getCategories())
         await this.props.dispatch(getLocations())
         await this.props.dispatch(getStatus())
         this.setState({
-            books: this.props.books,
             categories: this.props.categories,
             locations: this.props.locations,
             statuses: this.props.statuses
         })
+    }
+
+    makeRequest = () => {
+        const { page } = this.state
+        this.props.dispatch(getMoreBooks(page))
+            .then(res => {
+                this.setState({
+                    isLoading: false,
+                    books: this.state.books.concat(res.action.payload.data.result)
+                })
+            })
+    }
+
+    handleLoadMore = () => {
+        this.setState({
+            page: this.state.page + 1,
+        }, () => {
+            this.makeRequest()
+        })
+    }
+
+    renderFooter = () => {
+        return (
+            <View style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: '#fff',
+                marginVertical: 20
+            }}>
+                <ActivityIndicator animating size="large" />
+                <Text style={{ marginTop: 10, fontSize: 12 }}>Getting data..</Text>
+            </View>
+        )
     }
 
     donateBook = async () => {
@@ -188,9 +223,8 @@ class Home extends Component {
         })
     }
 
-    render() {
-        let ApiUrl = `https://api-libraryku.herokuapp.com`
-        function validateText(str) {
+    _renderItem = ({ item }) => {
+        function _validateText(str) {
             var tarea = str;
             if (tarea.indexOf("http://") == 0 || tarea.indexOf("https://") == 0) {
                 // do something here
@@ -199,8 +233,8 @@ class Home extends Component {
                 return true
             }
         }
-
-        let _renderItem = ({ item }) => (
+        let ApiUrl = `https://api-libraryku.herokuapp.com`
+        return (
             <TouchableOpacity
                 style={{
                     marginHorizontal: 13,
@@ -216,11 +250,28 @@ class Home extends Component {
                         width: 150
                     }}>
                     <CardItem cardBody>
-                        <Image source={{ uri: validateText(item.image) ? `${ApiUrl}/${item.image}` : item.image }} resizeMode='cover' style={{ height: 230, width: 'auto', flex: 1 }} />
+                        <Image source={{ uri: _validateText(item.image) ? `${ApiUrl}/${item.image}` : item.image }} resizeMode='cover' style={{ height: 230, width: 'auto', flex: 1 }} />
                     </CardItem>
                 </Card>
             </TouchableOpacity>
         )
+    }
+
+    render() {
+        if (this.state.isLoading) {
+            return (
+                <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#fff'
+                }}>
+                    <ActivityIndicator />
+                    <Text>fetching data...</Text>
+                </View>
+            )
+        }
+
         const { categories, locations, image, categoryid, locationid } = this.state
         const cat = categories
         const loc = locations
@@ -228,30 +279,36 @@ class Home extends Component {
         return (
             <>
                 <Navbar iduser={this.state.iduser} status={this.state.status} name={this.state.name} />
-                <ScrollView
+
+                <FlatList
+                    data={this.state.books}
+                    renderItem={this._renderItem}
                     showsVerticalScrollIndicator={false}
-                >
-                    <View style={{
-                        marginHorizontal: 20,
-                        marginTop: 10
-                    }}>
-                        <Item rounded style={{
-                            marginVertical: 30
-                        }}>
-                            <Icon name='search' style={{ paddingLeft: 20 }} />
-                            <Input placeholder='Search Book...' style={{
-                                paddingLeft: 10
-                            }} onChangeText={search => this.setState({ search })} />
-                        </Item>
-                    </View>
-                    <FlatList
-                        data={this.state.books}
-                        renderItem={_renderItem}
-                        showsVerticalScrollIndicator={false}
-                        numColumns={2}
-                        keyExtractor={item => item.bookid}
-                    />
-                </ScrollView>
+                    numColumns={2}
+                    keyExtractor={item => item.bookid}
+                    ListHeaderComponent={() => {
+                        return (
+                            <View style={{
+                                marginHorizontal: 20,
+                                marginTop: 10
+                            }}>
+                                <Item rounded style={{
+                                    marginVertical: 30
+                                }}>
+                                    <Icon name='search' style={{ paddingLeft: 20 }} />
+                                    <Input
+                                        placeholder='Search Book...'
+                                        style={{
+                                            paddingLeft: 10
+                                        }} />
+                                </Item>
+                            </View>
+                        )
+                    }}
+                    ListFooterComponent={this.renderFooter}
+                    onEndReached={this.handleLoadMore}
+                    onEndReachedThreshold={0.1}
+                />
                 <Modal
                     animationType='fade'
                     transparent={false}
