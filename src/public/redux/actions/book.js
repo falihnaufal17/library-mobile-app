@@ -1,10 +1,10 @@
 import axios from 'axios'
 let ApiUrl = `https://api-libraryku.herokuapp.com`
 
-export const getBooks = () => {
+export const getBooks = (search = '') => {
     return {
         type: 'GET_BOOKS',
-        payload: axios.get(`${ApiUrl}/books`)
+        payload: axios.get(`${ApiUrl}/books?search=${search}`)
     }
 }
 
@@ -23,6 +23,7 @@ export const detailBook = (bookid) => {
 }
 
 export const addBook = (data) => {
+    console.log(data)
     return {
         type: 'ADD_BOOK',
         payload: axios.post(`${ApiUrl}/books`, data)

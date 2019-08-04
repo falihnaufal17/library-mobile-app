@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { TouchableOpacity, Image, Modal, AsyncStorage as storage } from 'react-native'
-import { Input, Item, Card, CardItem, View, Icon, Fab, H1, Picker, Button, Text, Toast } from 'native-base';
+import { TouchableOpacity, Image, View, Modal, AsyncStorage as storage, } from 'react-native'
+import { Input, Item, Card, CardItem, Icon, Fab, H1, Picker, Button, Text, Toast, Row, Col, Thumbnail } from 'native-base';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import Navbar from '../../public/components/navbar'
+import ImagePicker from 'react-native-image-picker'
 
 //import redux
 import { connect } from 'react-redux'
@@ -21,14 +22,15 @@ class Home extends Component {
             locations: [],
             statuses: [],
             modalVisible: false,
+            search: '',
 
             title: '',
             writer: '',
-            image: '',
+            image: null,
             description: '',
             categoryid: 1,
             locationid: 1,
-            statusid: 1,
+            statusid: 2,
 
             name: '',
             iduser: '',
@@ -76,7 +78,7 @@ class Home extends Component {
     }
 
     componentDidMount = async () => {
-        await this.props.dispatch(getBooks())
+        await this.props.dispatch(getBooks(this.state.search))
         await this.props.dispatch(getCategories())
         await this.props.dispatch(getLocations())
         await this.props.dispatch(getStatus())
@@ -88,8 +90,8 @@ class Home extends Component {
         })
     }
 
-    donateBook = async (data) => {
-        if (this.state.title === '' || this.state.writer === 1 || this.state.image === '' || this.state.description === '') {
+    donateBook = async () => {
+        if (this.state.title === '' || this.state.writer === '' || this.state.image === '' || this.state.description === '') {
             Toast.show({
                 type: 'warning',
                 text: 'ups ada data yang kosong! :v',
@@ -102,8 +104,26 @@ class Home extends Component {
                 modalVisible: false
             })
         } else {
+            let formdata = new FormData()
 
-            await this.props.dispatch(addBook(data))
+            formdata.append('title', this.state.title)
+            formdata.append('writer', this.state.writer)
+            formdata.append('image', {
+                name: this.state.image.fileName,
+                type: this.state.image.type || null,
+                uri: this.state.image.uri
+            })
+
+            console.warn("IMAGENYA: ", "/images/" + this.state.image)
+
+            formdata.append('description', this.state.description)
+            formdata.append('locationid', this.state.locationid)
+            formdata.append('categoryid', this.state.categoryid)
+            formdata.append('statusid', 2)
+            formdata.append('created_at', Date.now())
+            formdata.append('updated_at', Date.now())
+
+            await this.props.dispatch(addBook(formdata))
                 .then(() => {
                     Toast.show({
                         type: 'success',
@@ -116,15 +136,16 @@ class Home extends Component {
 
                         title: '',
                         writer: '',
-                        image: '',
+                        image: null,
                         description: '',
                         categoryid: 1,
                         locationid: 1,
-                        statusid: 1,
+                        statusid: 2,
                         modalVisible: false
                     })
                 })
-                .catch(() => {
+                .catch((error) => {
+                    console.warn(error)
                     Toast.show({
                         type: 'danger',
                         text: 'Yahh judul buku sudah ada ;(',
@@ -134,7 +155,7 @@ class Home extends Component {
                     this.setState({
                         title: '',
                         writer: '',
-                        image: '',
+                        image: null,
                         description: '',
                         categoryid: 1,
                         locationid: 1,
@@ -155,50 +176,55 @@ class Home extends Component {
         }
     }
 
-    _renderItem = ({ item }) => (
-        <TouchableOpacity
-            style={{
-                marginHorizontal: 13,
-                alignItems: 'center',
-                justifyContent: 'center'
-            }}
-            onPress={() => this.props.navigation.navigate('Detail', {
-                bookid: item.bookid
-            })}>
-            <Card
-                style={{
-                    height: 'auto',
-                    width: 150
-                }}>
-                <CardItem cardBody>
-                    <Image source={{ uri: item.image }} resizeMode='cover' style={{ height: 230, width: 'auto', flex: 1 }} />
-                </CardItem>
-            </Card>
-        </TouchableOpacity>
-    )
-
-    render() {
-        const { books, categories, locations, statuses, title, writer, image, description, categoryid, locationid, statusid } = this.state
-
-        const result = books
-        const cat = categories
-        const loc = locations
-        const stat = statuses
-
-        let data = {
-            title: title,
-            writer: writer,
-            image: image,
-            description: description,
-            categoryid: categoryid,
-            locationid: locationid,
-            statusid: statusid
+    handleChoosePhoto = () => {
+        const options = {
+            noData: true,
         }
 
-        console.warn("Daftar buku: " + result)
-        console.warn("Categories: " + cat)
-        console.warn("Locations: " + loc)
-        console.warn("Status buku: " + stat)
+        ImagePicker.launchImageLibrary(options, response => {
+            if (response.uri) {
+                this.setState({ image: response })
+            }
+        })
+    }
+
+    render() {
+        let ApiUrl = `https://api-libraryku.herokuapp.com`
+        function validateText(str) {
+            var tarea = str;
+            if (tarea.indexOf("http://") == 0 || tarea.indexOf("https://") == 0) {
+                // do something here
+                return false
+            } else {
+                return true
+            }
+        }
+
+        let _renderItem = ({ item }) => (
+            <TouchableOpacity
+                style={{
+                    marginHorizontal: 13,
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}
+                onPress={() => this.props.navigation.navigate('Detail', {
+                    bookid: item.bookid
+                })}>
+                <Card
+                    style={{
+                        height: 'auto',
+                        width: 150
+                    }}>
+                    <CardItem cardBody>
+                        <Image source={{ uri: validateText(item.image) ? `${ApiUrl}/${item.image}` : item.image }} resizeMode='cover' style={{ height: 230, width: 'auto', flex: 1 }} />
+                    </CardItem>
+                </Card>
+            </TouchableOpacity>
+        )
+        const { categories, locations, image, categoryid, locationid } = this.state
+        const cat = categories
+        const loc = locations
+
         return (
             <>
                 <Navbar iduser={this.state.iduser} status={this.state.status} name={this.state.name} />
@@ -215,19 +241,17 @@ class Home extends Component {
                             <Icon name='search' style={{ paddingLeft: 20 }} />
                             <Input placeholder='Search Book...' style={{
                                 paddingLeft: 10
-                            }} />
+                            }} onChangeText={search => this.setState({ search })} />
                         </Item>
                     </View>
                     <FlatList
                         data={this.state.books}
-                        renderItem={this._renderItem}
+                        renderItem={_renderItem}
                         showsVerticalScrollIndicator={false}
                         numColumns={2}
                         keyExtractor={item => item.bookid}
                     />
-
                 </ScrollView>
-
                 <Modal
                     animationType='fade'
                     transparent={false}
@@ -235,96 +259,82 @@ class Home extends Component {
                     onRequestClose={() => {
                         this.setModalVisible(false)
                     }}>
-                    <View style={{ height: '100%', width: '100%', backgroundColor: '#85b555' }}>
-                        <ScrollView>
-                            <View style={{ marginVertical: 30 }}>
-                                <H1 style={{ color: 'white', textAlign: 'center', marginBottom: 20 }}>Hello Donator!</H1>
-                                <View style={{ marginHorizontal: 20 }}>
-                                    <Item rounded style={{ marginVertical: 10, borderColor: 'white' }}>
-                                        <Input placeholder="Title book..." onChangeText={title => this.setState({ title })} placeholderTextColor='white' style={{ color: 'white', paddingLeft: 20 }} />
-                                    </Item>
-                                    <Item rounded style={{ marginVertical: 10, borderColor: 'white' }}>
-                                        <Input placeholder="Url image..." onChangeText={image => this.setState({ image })} placeholderTextColor='white' style={{ color: 'white', paddingLeft: 20 }} />
-                                    </Item>
-                                    <Item rounded style={{ marginVertical: 10, borderColor: 'white' }}>
-                                        <Input keyboardType='default' onChangeText={writer => this.setState({ writer })} placeholder="Writer..." placeholderTextColor='white' style={{ color: 'white', paddingLeft: 20 }} />
-                                    </Item>
-                                    <Item rounded style={{ marginVertical: 10, borderColor: 'white' }}>
-                                        <Input textContentType='streetAddressLine1' onChangeText={description => this.setState({ description })} placeholder="Description..." placeholderTextColor='white' style={{ color: 'white', paddingLeft: 20 }} />
-                                    </Item>
-                                    <Item rounded style={{ marginVertical: 10, borderColor: 'white' }}>
-                                        <Picker
-                                            mode="dropdown"
-                                            placeholder="Select category..."
-                                            placeholderStyle="white"
-                                            placeholderIconColor="white"
-                                            style={{ paddingLeft: 20, color: 'white' }}
-                                            selectedValue={categoryid}
-                                            onValueChange={(selected) => {
-                                                this.setState({
-                                                    categoryid: selected
-                                                })
-                                            }}
-                                        >
-                                            {
-                                                cat.map(item => (
-                                                    <Picker.Item label={item.category} value={item.categoryid} />
-                                                ))
-                                            }
-                                        </Picker>
-                                    </Item>
-                                    <Item rounded style={{ marginVertical: 10, borderColor: 'white' }}>
-                                        <Picker
-                                            mode="dropdown"
-                                            placeholder="Select location..."
-                                            placeholderStyle="#fff"
-                                            placeholderIconColor="#fff"
-                                            style={{ paddingLeft: 20, color: 'white' }}
-                                            selectedValue={locationid}
-                                            onValueChange={(selected) => {
-                                                this.setState({
-                                                    locationid: selected
-                                                })
-                                            }}
-                                        >
-                                            {
-                                                loc.map(item => (
-                                                    <Picker.Item label={item.location} value={item.locationid} />
-                                                ))
-                                            }
-                                        </Picker>
-                                    </Item>
-                                    <Item rounded style={{ marginVertical: 10, borderColor: 'white' }}>
-                                        <Picker
-                                            mode="dropdown"
-                                            placeholder="Select status..."
-                                            placeholderStyle="#fff"
-                                            placeholderIconColor="#fff"
-                                            style={{ paddingLeft: 20, color: 'white' }}
-                                            selectedValue={statusid}
-                                            onValueChange={(selected) => {
-                                                this.setState({
-                                                    statusid: selected
-                                                })
-                                            }}
-                                        >
-                                            {
-                                                stat.map(item => (
-                                                    <Picker.Item label={item.status} value={item.statusid} />
-                                                ))
-                                            }
-                                        </Picker>
-                                    </Item>
-                                    <Button light rounded><Text style={{ width: '100%', textAlign: 'center' }} onPress={() => this.donateBook(data)}>Donate!</Text></Button>
-                                </View>
+                    <ScrollView style={{ backgroundColor: '#85b555' }}>
+                        <View style={{ marginVertical: 30 }}>
+                            <H1 style={{ color: 'white', textAlign: 'center', marginBottom: 20 }}>Hello Donator!</H1>
+                            <View style={{ marginHorizontal: 20 }}>
+                                <Item rounded style={{ marginVertical: 10, borderColor: 'white' }}>
+                                    <Input placeholder="Title book..." onChangeText={title => this.setState({ title })} placeholderTextColor='white' style={{ color: 'white', paddingLeft: 20 }} />
+                                </Item>
+                                <Row style={{ marginVertical: 10, borderColor: 'white', marginHorizontal: 20 }}>
+                                    <Col>
+                                        <Button style={{ marginRight: 'auto' }} rounded success onPress={this.handleChoosePhoto}><Text style={{ textAlign: 'center' }}>Choose Image</Text></Button>
+                                    </Col>
+                                    <Col>
+                                        {
+                                            image && (
+                                                <Thumbnail square large source={{ uri: image.uri }} style={{ marginLeft: 'auto' }} resizeMode='cover' />
+                                            )
+                                        }
+                                    </Col>
+                                </Row>
+                                <Item rounded style={{ marginVertical: 10, borderColor: 'white' }}>
+                                    <Input keyboardType='default' onChangeText={writer => this.setState({ writer })} placeholder="Writer..." placeholderTextColor='white' style={{ color: 'white', paddingLeft: 20 }} />
+                                </Item>
+                                <Item rounded style={{ marginVertical: 10, borderColor: 'white' }}>
+                                    <Input textContentType='streetAddressLine1' onChangeText={description => this.setState({ description })} placeholder="Description..." placeholderTextColor='white' style={{ color: 'white', paddingLeft: 20 }} />
+                                </Item>
+                                <Item rounded style={{ marginVertical: 10, borderColor: 'white', backgroundColor: '#fdfbf2' }}>
+                                    <Picker
+                                        mode="dropdown"
+                                        placeholder="Select category..."
+                                        placeholderStyle="white"
+                                        placeholderIconColor="white"
+                                        style={{ paddingLeft: 20, color: 'white' }}
+                                        selectedValue={categoryid}
+                                        onValueChange={(selected) => {
+                                            this.setState({
+                                                categoryid: selected
+                                            })
+                                        }}
+                                    >
+                                        {
+                                            cat.map(item => (
+                                                <Picker.Item label={item.category} value={item.categoryid} />
+                                            ))
+                                        }
+                                    </Picker>
+                                </Item>
+                                <Item rounded style={{ backgroundColor: '#fdfbf2', marginVertical: 10, borderColor: 'white', backgroundColor: '#fdfbf2' }}>
+                                    <Picker
+                                        mode="dropdown"
+                                        placeholder="Select location..."
+                                        placeholderStyle="#fff"
+                                        placeholderIconColor="#fff"
+                                        style={{ paddingLeft: 20, color: 'white' }}
+                                        selectedValue={locationid}
+                                        onValueChange={(selected) => {
+                                            this.setState({
+                                                locationid: selected
+                                            })
+                                        }}
+                                    >
+                                        {
+                                            loc.map(item => (
+                                                <Picker.Item label={item.location} value={item.locationid} />
+                                            ))
+                                        }
+                                    </Picker>
+                                </Item>
+                                <Item>
+                                    <Button rounded success onPress={() => this.donateBook()}><Text style={{ width: '100%', textAlign: 'center' }}>Donate!</Text></Button>
+                                </Item>
                             </View>
-                        </ScrollView>
-                    </View>
+                        </View>
+                    </ScrollView>
                 </Modal>
-
                 <Fab
                     direction="up"
-                    containerStyle={{}}
                     style={{ backgroundColor: '#5067FF' }}
                     position="bottomRight"
                     onPress={() => this.setModalVisible(true)}>

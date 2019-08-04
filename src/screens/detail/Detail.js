@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Image, ScrollView, AsyncStorage as storage, View } from 'react-native'
+import { Image, ScrollView, AsyncStorage as storage, View, StatusBar } from 'react-native'
 import { H1, Text, Badge, Col, Row, Toast, Button, Content } from 'native-base'
 
 import { connect } from 'react-redux'
@@ -83,9 +83,18 @@ class Detail extends Component {
     }
 
     render() {
+        let ApiUrl = `https://api-libraryku.herokuapp.com`
+        function validateText(str) {
+            var tarea = str;
+            if (tarea.indexOf("http://") == 0 || tarea.indexOf("https://") == 0) {
+                // do something here
+                return false
+            } else {
+                return true
+            }
+        }
+
         const { books } = this.state
-        console.warn(books)
-        console.warn(this.state.token)
 
         let detail = books
 
@@ -98,6 +107,7 @@ class Detail extends Component {
 
         return (
             <View>
+                <StatusBar backgroundColor='transparent' barStyle='dark-content' />
                 <ScrollView
                     showsVerticalScrollIndicator={false}>
                     <View
@@ -105,10 +115,10 @@ class Detail extends Component {
                             marginBottom: 100
                         }}>
                         <Image
-                            source={{ uri: `${detail.image}` }}
+                            source={{ uri: validateText(`${detail.image}`) ? `${ApiUrl}/${detail.image}` : `${detail.image}` }}
                             style={{
                                 width: '100%',
-                                height: 200
+                                height: 200,
                             }}
                             blurRadius={0.5}
                             resizeMode='cover'
@@ -126,7 +136,7 @@ class Detail extends Component {
                                 borderRadius: 20
                             }}>
                             <Image
-                                source={{ uri: `${detail.image}` }}
+                                source={{ uri: validateText(`${detail.image}`) ? `${ApiUrl}/${detail.image}` : `${detail.image}` }}
                                 style={{
                                     width: 150,
                                     height: 200,

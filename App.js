@@ -50,8 +50,6 @@ export default class App extends Component {
     axios.defaults.headers.common['x-access-token'] = 'bearer ' + this.state.token
     axios.defaults.headers.common['x-control-user'] = this.state.iduser
 
-    console.warn(this.state.iduser)
-
     return (
       <>
         <Provider store={store}>

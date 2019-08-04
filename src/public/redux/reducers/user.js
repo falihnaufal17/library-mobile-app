@@ -41,7 +41,7 @@ export default user = (state = initialState, action) => {
                 ...state,
                 isLoading: false,
                 isFulFilled: true,
-                userList: action.payload.data.result
+                userList: [state.userList, action.payload.data[0]]
             }
         case 'LOGOUT_USER_PENDING':
             return {

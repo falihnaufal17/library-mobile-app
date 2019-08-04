@@ -146,9 +146,6 @@ class Profile extends Component {
     }
 
     render() {
-        const { loans } = this.state
-        console.warn(loans)
-        console.warn(this.state.id_card)
         return (
             <>
                 <Navbar iduser={this.state.iduser} name={this.state.name} status={this.state.status} />

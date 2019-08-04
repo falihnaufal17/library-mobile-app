@@ -23,7 +23,7 @@ class Navbar extends Component {
             <Header style={{ backgroundColor: '#85b555' }} androidStatusBarColor={'#85b555'}>
 
                 <Left style={{ marginHorizontal: 20 }}>
-                    <Title style={{ fontWeight: 'bold', fontSize: 20 }}>Libraryku</Title>
+                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Home')}><Title style={{ fontWeight: 'bold', fontSize: 20 }}>Libraryku</Title></TouchableOpacity>
                 </Left>
                 <Right>
                     {

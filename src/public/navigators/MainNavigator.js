@@ -1,6 +1,5 @@
 import { createStackNavigator, createAppContainer } from 'react-navigation'
 import React from 'react'
-import { StatusBar } from 'react-native'
 import Profile from '../../screens/profile/Profile'
 import Home from '../../screens/home/Home'
 import Login from '../../screens/login/Login'
@@ -17,8 +16,7 @@ const AppNavigator = createStackNavigator(
         Register: { screen: Register, navigationOptions: { header: null } },
         Detail: {
             screen: Detail, navigationOptions: {
-                header: (<StatusBar backgroundColor='transparent' barStyle='dark-content' />),
-
+                header: null
             }
         },
         Profile: {
@@ -27,6 +25,5 @@ const AppNavigator = createStackNavigator(
     },
     {
         headerMode: 'none',
-        initialRouteName: 'Home'
     })
 export default createAppContainer(AppNavigator)
