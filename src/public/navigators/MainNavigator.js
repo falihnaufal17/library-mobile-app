@@ -5,6 +5,7 @@ import Home from '../../screens/home/Home'
 import Login from '../../screens/login/Login'
 import Register from '../../screens/register/Register'
 import Detail from '../../screens/detail/Detail'
+import { Text } from 'react-native';
 
 const AppNavigator = createStackNavigator(
     {
@@ -21,9 +22,13 @@ const AppNavigator = createStackNavigator(
         },
         Profile: {
             screen: Profile,
+            navigationOptions: {
+                // headerTintColor: '#ffffff',
+                // headerRight: <Text style={{ marginHorizontal: 30, color: '#ffffff', fontSize: 20 }}>Profile</Text>,
+                // headerStyle: { backgroundColor: '#85b555' },
+                header: null
+            }
         }
-    },
-    {
-        headerMode: 'none',
-    })
+    }
+)
 export default createAppContainer(AppNavigator)

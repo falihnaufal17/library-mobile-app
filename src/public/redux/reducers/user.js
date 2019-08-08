@@ -27,6 +27,7 @@ export default user = (state = initialState, action) => {
             const iduser = action.payload.data.result.iduser.toString()
             const id_card = action.payload.data.result.id_card.toString()
             const name = action.payload.data.result.name
+            const image = action.payload.data.result.image
             const email = action.payload.data.result.email
             const status = action.payload.data.result.status.toString()
             const isverify = action.payload.data.result.isverify
@@ -34,6 +35,7 @@ export default user = (state = initialState, action) => {
             storage.setItem('iduser', iduser)
             storage.setItem('id_card', id_card)
             storage.setItem('name', name)
+            storage.setItem('image', image)
             storage.setItem('email', email)
             storage.setItem('status', status)
             storage.setItem('isverify', isverify)
@@ -62,7 +64,7 @@ export default user = (state = initialState, action) => {
                 ...state,
                 isLoading: false,
                 isFulFilled: true,
-                userList: action.payload.data.result
+                userList: [state.userList, action.payload.data[0]]
             }
         case 'REGISTER_USER_PENDING':
             return {

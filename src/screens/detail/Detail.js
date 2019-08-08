@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Image, ScrollView, AsyncStorage as storage, View, StatusBar } from 'react-native'
+import { Image, ScrollView, AsyncStorage as storage, View, StatusBar, BackHandler } from 'react-native'
 import { H1, Text, Badge, Col, Row, Toast, Button, Content } from 'native-base'
 
 import { connect } from 'react-redux'

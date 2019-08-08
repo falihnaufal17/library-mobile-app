@@ -41,7 +41,7 @@ class Login extends Component {
                         password: ''
                     })
                     //redirect to home
-                    this.props.navigation.navigate('Home')
+                    this.props.navigation.push('Home')
                     console.warn('LOGIN SUCCESS')
                 })
                 .catch(() => {

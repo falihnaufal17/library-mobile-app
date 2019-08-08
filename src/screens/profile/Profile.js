@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import { Image, ScrollView, AsyncStorage as storage } from 'react-native'
+import { Image, ScrollView, AsyncStorage as storage, BackHandler } from 'react-native'
 import { Card, CardItem, Text, Row, Col, View, H3, Badge, Icon, Toast, Content, Accordion, Thumbnail } from 'native-base'
-import Navbar from '../../public/components/navbar';
 import { withNavigation } from 'react-navigation'
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import moment from 'moment'
+
 
 //import redux
 import { connect } from 'react-redux'
@@ -21,8 +22,9 @@ class Profile extends Component {
             isverify: '',
             id_card: '',
             name: '',
+            image: '',
             email: '',
-            iduser: '',
+            iduser: this.props.navigation.getParam('iduser'),
             status: '',
         }
 
@@ -66,31 +68,45 @@ class Profile extends Component {
             }
         })
 
-        storage.getItem('iduser', (error, result) => {
+        storage.getItem('image', (error, result) => {
             if (result) {
                 this.setState({
-                    iduser: result
+                    image: result
                 })
             }
         })
     }
 
-    componentDidMount = async () => {
-        await this.props.dispatch(getLoanByUser(this.props.navigation.getParam('iduser')))
-        this.setState({
-            loans: this.props.loans
-        })
+    componentDidMount = () => {
+        console.warn('ID USER: ', this.state.iduser)
+        this.props.dispatch(getLoanByUser(this.state.iduser))
+            .then(() => {
+                this.setState({
+                    loans: this.props.loans
+                })
+            })
+            .catch(() => {
+                return (
+                    <Text style={{ justifyContent: 'center', alignItems: 'center' }}>Oops kamu belum pinjam buku</Text>
+                )
+            })
     }
 
-    formatDate(date) {
-        let data = Date.parse(date);
-        let newDate = new Date(data);
-        let day = newDate.getDate();
-        let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        let month = months[newDate.getMonth()];
-        let year = newDate.getFullYear();
-        return `${day} ${month} ${year}`
+    _renderHeader(item) {
+        return (
+            <View
+                style={{
+                    flexDirection: "row",
+                    padding: 10,
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    backgroundColor: "#A9DAD6"
+                }}>
+                <Text>{item.title}</Text>
+            </View>
+        )
     }
+
     _renderContent(item) {
         return (
             <View style={{ marginHorizontal: 10 }}>
@@ -99,11 +115,11 @@ class Profile extends Component {
                     <Col>
                         <Row>
                             <Col><Text>Loaning date: </Text></Col>
-                            <Col><Text>{item.created_at}</Text></Col>
+                            <Col><Text>{moment(item.created_at).format('DD-MM-YYYY')}</Text></Col>
                         </Row>
                         <Row>
                             <Col><Text>Expired date: </Text></Col>
-                            <Col><Text>{item.expired_date}</Text></Col>
+                            <Col><Text>{moment(item.expired_date).format('DD-MM-YYYY')}</Text></Col>
                         </Row>
                         <Row>
                             <Col><Text>Forfeit: </Text></Col>
@@ -130,9 +146,10 @@ class Profile extends Component {
                     duration: 3000
                 })
                 this.setState({
-                    users: this.props.users
+                    users: this.props.users,
+                    iduser: ''
                 })
-                this.props.navigation.navigate('Home')
+                this.props.navigation.push('Home')
             })
             .catch(() => {
                 Toast.show({
@@ -146,57 +163,51 @@ class Profile extends Component {
     }
 
     render() {
+        console.warn('Avatar user: ' + this.state.image)
         return (
             <>
-                <Navbar iduser={this.state.iduser} name={this.state.name} status={this.state.status} />
-                <ScrollView>
-                    <View style={{ marginHorizontal: 20 }}>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <Image source={require('../../assets/old-library-book.jpg')} style={{ width: '100%', height: 150 }} />
+                    <Content padder style={{ marginHorizontal: 10, bottom: 10 }}>
                         <Card style={{ width: '100%' }}>
                             <CardItem header>
-                                <Row>
-                                    <Col>
-                                        <H3>Member Card</H3>
-                                    </Col>
-                                    <Col>
-                                        {
-                                            this.state.isverify === 'true'
-                                                ?
-                                                <Badge success style={{ marginLeft: 'auto' }}><Text style={{ textAlign: 'right' }}>Vierified <Icon name='check' style={{ color: 'white', fontSize: 12 }} type='FontAwesome5' /></Text></Badge>
-                                                :
-                                                <Badge danger style={{ marginLeft: 'auto' }}><Text style={{ textAlign: 'right' }}>Not Verified <Icon name='close-circle' style={{ color: 'white', fontSize: 12 }} /></Text></Badge>
-                                        }
-                                    </Col>
-                                </Row>
+                                <Text></Text>
                             </CardItem>
                             <CardItem>
                                 <Row>
                                     <Col>
-                                        <Image source={require('../../assets/images.png')} style={{ width: 80, height: 80 }} />
-                                    </Col>
-                                    <Col>
                                         <Row>
                                             <Col>
-                                                <Text style={{ textAlign: 'right' }}>
+                                                <Text style={{ textAlign: 'center' }}>
                                                     {this.state.id_card}
                                                 </Text>
                                             </Col>
                                         </Row>
                                         <Row>
                                             <Col>
-                                                <Text style={{ textAlign: 'right', textTransform: 'capitalize' }}>
+                                                <Text style={{ textAlign: 'center', textTransform: 'capitalize' }}>
                                                     {this.state.name}
                                                 </Text>
                                             </Col>
                                         </Row>
                                         <Row>
                                             <Col>
-                                                <Text style={{ textAlign: 'right', justifyContent: 'flex-end' }}>
+                                                <Text style={{ textAlign: 'center', justifyContent: 'flex-end' }}>
                                                     {this.state.email}
                                                 </Text>
                                             </Col>
                                         </Row>
                                     </Col>
                                 </Row>
+                            </CardItem>
+                            <CardItem style={{ justifyContent: 'center', margin: 0, alignItems: 'center' }}>
+                                {
+                                    this.state.isverify === 'true'
+                                        ?
+                                        <Badge success><Text style={{ textAlign: 'center' }}>Vierified <Icon name='check' style={{ color: 'white', fontSize: 12 }} type='FontAwesome5' /></Text></Badge>
+                                        :
+                                        <Badge danger><Text style={{ textAlign: 'center' }}>Not Verified <Icon name='close-circle' style={{ color: 'white', fontSize: 12 }} /></Text></Badge>
+                                }
                             </CardItem>
                             <CardItem footer>
                                 <Row>
@@ -213,22 +224,34 @@ class Profile extends Component {
                                 </Row>
                             </CardItem>
                         </Card>
-                    </View>
-                    <Content padder style={{ backgroundColor: 'white', marginHorizontal: 20 }}>
+                    </Content>
+
+                    <Content padder style={{ backgroundColor: 'white', marginHorizontal: 10, bottom: 25 }}>
                         <H3 style={{ marginVertical: 10 }}>History pinjaman:</H3>
                         {
-                            this.state.loans &&
+                            this.state.loans && this.state.loans.length > 0 &&
                                 this.state.iduser && this.state.status === "1"
                                 ?
                                 <Accordion
                                     dataArray={this.state.loans}
                                     expanded={true}
-                                    renderContent={this._renderContent} />
+                                    renderContent={this._renderContent}
+                                    renderHeader={this._renderHeader} />
                                 :
                                 <Text style={{ justifyContent: 'center', alignItems: 'center' }}>Oops kamu belum pinjam buku</Text>
                         }
 
                     </Content>
+
+                    <View style={{ position: 'absolute', alignSelf: 'center', margin: 0, alignItems: 'center', justifyContent: 'center', top: 90 }}>
+                        {
+                            this.state.image === ''
+                                ?
+                                <Thumbnail style={{ width: 120, height: 120, borderColor: 'white', borderWidth: 3, borderRadius: 60 }} source={require('../../assets/images.png')} resizeMode='cover' />
+                                :
+                                <Thumbnail style={{ width: 120, height: 120, borderColor: 'white', borderWidth: 3, borderRadius: 60 }} source={{ uri: this.state.image }} resizeMode='cover' />
+                        }
+                    </View>
                 </ScrollView>
             </>
         )

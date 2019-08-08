@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { TouchableOpacity, Image, View, AsyncStorage as storage, ActivityIndicator, StyleSheet } from 'react-native'
+import { TouchableOpacity, Image, View, AsyncStorage as storage, ActivityIndicator, StyleSheet, BackHandler, Alert } from 'react-native'
 import { FlatGrid } from 'react-native-super-grid';
-import { Input, Item, Card, CardItem, Icon, Fab, Text } from 'native-base';
+import { Input, Item, Card, CardItem, Icon, Fab, Text, Toast } from 'native-base';
 import Navbar from '../../public/components/navbar'
 import DonateBook from '../../public/components/donateBook'
 
@@ -56,8 +56,8 @@ class Home extends Component {
         })
     }
 
-    componentDidMount = () => {
-        this.makeRequest()
+    componentDidMount = async () => {
+        await this.makeRequest()
     }
 
     makeRequest = () => {
@@ -82,17 +82,18 @@ class Home extends Component {
     }
 
     renderFooter = () => {
+
         return (
             <View style={{
                 flex: 1,
                 justifyContent: 'center',
                 alignItems: 'center',
                 backgroundColor: '#fff',
-                marginVertical: 5
+                marginVertical: 15
             }}>
                 <>
                     <ActivityIndicator animating size="large" />
-                    <Text style={{ marginTop: 10, fontSize: 12 }}>Getting data..</Text>
+                    <Text style={{ fontSize: 12 }}>Getting data..</Text>
                 </>
             </View>
         )
@@ -131,12 +132,14 @@ class Home extends Component {
                 <Item rounded style={{
                     marginVertical: 30
                 }}>
-                    <Icon name='search' style={{ paddingLeft: 20 }} />
                     <Input
                         placeholder='Search Book...'
                         style={{
-                            paddingLeft: 10
+                            paddingLeft: 25
                         }} />
+                    <TouchableOpacity onPress={() => Toast.show({ text: 'Search Proccessing...' })}>
+                        <Icon name='search' style={{ paddingRight: 20 }} />
+                    </TouchableOpacity>
                 </Item>
             </View>
         )

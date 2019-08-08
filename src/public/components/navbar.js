@@ -29,15 +29,16 @@ class Navbar extends Component {
                     {
                         this.props.iduser && this.props.status === '1'
                             ?
-                            <TouchableOpacity style={{ marginHorizontal: 10 }} onPress={() => this.props.navigation.navigate('Profile', {
+                            <TouchableOpacity style={{ marginHorizontal: 5 }} onPress={() => this.props.navigation.push('Profile', {
                                 iduser: this.props.iduser
-                            })}>
-                                <Text style={{ color: 'white', textTransform: 'capitalize' }}><Icon name="user" fontSize={1} color='white' type="FontAwesome5" /> {this.text(this.props.name)}</Text>
+                            })}><Text>
+                                    <Icon name="user" style={{ color: 'white', fontSize: 50 }} type='EvilIcons' />
+                                </Text>
                             </TouchableOpacity>
                             :
                             <>
-                                <TouchableOpacity onPress={() => this.props.navigation.navigate('Login')} style={{ marginHorizontal: 10 }}><Text style={{ color: '#fff' }}>Login</Text></TouchableOpacity>
-                                <TouchableOpacity onPress={() => this.props.navigation.navigate('Register')}><Text style={{ color: '#fff' }}>Register</Text></TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.props.navigation.push('Login')} style={{ marginHorizontal: 10 }}><Text style={{ color: '#fff' }}>Login</Text></TouchableOpacity>
+                                <TouchableOpacity onPress={() => this.props.navigation.push('Register')}><Text style={{ color: '#fff' }}>Register</Text></TouchableOpacity>
                             </>
                     }
                 </Right>
