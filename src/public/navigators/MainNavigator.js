@@ -30,8 +30,8 @@ const AppNavigator = createStackNavigator(
             }
         }
     },
-    {
-        initialRouteName: 'Register'
-    }
+    // {
+    //     initialRouteName: 'Register'
+    // }
 )
 export default createAppContainer(AppNavigator)
