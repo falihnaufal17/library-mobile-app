@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Image, StyleSheet, ScrollView } from 'react-native'
-import { Form, Item, Label, Input, Button, Text, Card, CardItem, Container, Toast, Row, Col, Thumbnail } from 'native-base'
+import { Form, Item, Label, Input, Button, Text, Card, CardItem, Container, Toast, Row, Col, Thumbnail, View } from 'native-base'
 import ImagePicker from 'react-native-image-picker'
 
 // import redux
@@ -100,73 +100,46 @@ class Register extends Component {
         const { id_card, name, email, password, image, idrole, status, isverify } = this.state
 
         return (
-            <Container style={styles.container}>
-                <ScrollView showsHorizontalScrollIndicator={false}>
-                    <Image source={require('../../assets/logo/logo.png')} style={styles.imgCenter} />
-                    <Card>
-                        <CardItem header style={{
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}>
-                            <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Register</Text>
-                        </CardItem>
-                        <Form>
-                            <Item floatingLabel style={{
-                                marginHorizontal: 20
-                            }}>
-                                <Label>ID Card</Label>
-                                <Input onChangeText={id_card => this.setState({ id_card })} keyboardType="numeric" />
-                            </Item>
-                            <Item floatingLabel style={{
-                                marginHorizontal: 20
-                            }}>
-                                <Label>Fullname</Label>
-                                <Input onChangeText={name => this.setState({ name })} />
-                            </Item>
-                            <Item floatingLabel style={{
-                                marginHorizontal: 20
-                            }}>
-                                <Label>Email</Label>
-                                <Input keyboardType='email-address' onChangeText={email => this.setState({ email })} />
-                            </Item>
-                            <Item floatingLabel style={{
-                                marginHorizontal: 20
-                            }}>
-                                <Label>Password</Label>
-                                <Input onChangeText={password => this.setState({ password })} secureTextEntry={true} />
-                            </Item>
-                            <Button style={{
-                                marginHorizontal: 20,
-                                marginVertical: 20,
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }} rounded success onPress={this.handleChoosePhoto}><Text style={{ textAlign: 'center', width: '100%' }}>Choose Image</Text></Button>
-                            <Item style={{
-                                marginHorizontal: 20,
-                                margin: 0, alignItems: 'center', justifyContent: 'center', borderColor: 'transparent'
-                            }}>
-                                {
-                                    image && (
-                                        <Thumbnail rounded large source={{ uri: image.uri }} resizeMode='cover' />
-                                    )
-                                }
-                            </Item>
-                            <Input type="hidden" style={{ width: 0 }} value="2" />
-                            <Button success rounded style={{
-                                marginHorizontal: 20,
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }}
-                                onPress={() => this.register()}>
-                                <Text style={{
-                                    width: '100%',
-                                    textAlign: 'center'
-                                }}>Register</Text>
-                            </Button>
-                        </Form>
-                    </Card>
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: 0,
+                    backgroundColor: '#85b555'
+                }}
+            >
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <Text style={{ textAlign: 'center', fontWeight: 'bold', fontSize: 24, color: 'white' }}>Register</Text>
+                    {
+                        image && (
+                            <Thumbnail style={{ alignSelf: 'center', marginTop: 10, borderColor: 'white', borderWidth: 3 }} rounded large source={{ uri: image.uri }} resizeMode='cover' />
+                        ) || (<Thumbnail style={{ alignSelf: 'center', marginTop: 10, borderColor: 'white', borderWidth: 3 }} rounded large source={require('../../assets/images.png')} resizeMode='cover' />)
+                    }
+                    <Form style={{ marginHorizontal: 20, marginVertical: 20 }}>
+                        <Item rounded>
+                            <Input style={{ marginHorizontal: 20, color: 'white' }} onChangeText={id_card => this.setState({ id_card: id_card })} keyboardType="numeric" placeholder="Id Card..." placeholderTextColor="white" />
+                        </Item>
+                        <Item rounded style={{ marginTop: 20 }}>
+                            <Input style={{ marginHorizontal: 20, color: 'white' }} onChangeText={name => this.setState({ name: name })} placeholder="Fullname" placeholderTextColor="white" />
+                        </Item>
+                        <Item rounded style={{ marginTop: 20 }}>
+                            <Input style={{ marginHorizontal: 20, color: 'white' }} keyboardType='email-address' onChangeText={email => this.setState({ email: email })} placeholder="Email Address..." placeholderTextColor="white" />
+                        </Item>
+                        <Item rounded style={{ marginTop: 20 }}>
+                            <Input style={{ marginHorizontal: 20, color: 'white' }} onChangeText={password => this.setState({ password: password })} secureTextEntry={true} placeholder="Password" placeholderTextColor="white" />
+                        </Item>
+                        <Button rounded style={{ marginTop: 20 }} success onPress={this.handleChoosePhoto}><Text style={{ textAlign: 'center', width: '100%' }}>Choose Image</Text></Button>
+
+                        <Button success style={{ marginTop: 20 }} rounded onPress={() => this.register()}>
+                            <Text style={{
+                                width: '100%',
+                                textAlign: 'center'
+                            }}>Register</Text>
+                        </Button>
+                    </Form>
                 </ScrollView>
-            </Container>
+            </View>
         )
     }
 }
@@ -178,17 +151,3 @@ const mapStateToProps = state => {
 }
 
 export default connect(mapStateToProps)(Register)
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        marginHorizontal: 20,
-        marginVertical: 20
-    },
-    imgCenter: {
-        width: 250,
-        height: 100,
-    }
-})

@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { Image, StyleSheet, AsyncStorage as storage } from 'react-native'
-import { Form, Item, Label, Input, Button, Text, Card, CardItem, Body, Container, Content, Toast } from 'native-base'
+import { Form, Item, Label, Input, Button, Text, Card, CardItem, Body, Container, Content, Toast, View } from 'native-base'
 
 //import redux
 import { connect } from 'react-redux'
 import { login } from '../../public/redux/actions/user'
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 class Login extends Component {
     constructor(props) {
@@ -67,68 +68,69 @@ class Login extends Component {
             email: email,
             password: password
         }
-
         return (
-            <Container style={styles.container}>
-                <Content>
-                    <Image source={require('../../assets/logo/logo.png')} style={styles.imgCenter} />
-                    <Card style={{ marginTop: 30 }}>
-                        <CardItem header style={{ alignItems: 'center', justifyContent: 'center' }}>
-                            <Text style={{ fontWeight: 'bold', fontSize: 24 }}>Login</Text>
-                        </CardItem>
-                        <Form>
-                            <Item floatingLabel style={{
-                                marginHorizontal: 20
-                            }}>
-                                <Label>Email</Label>
-                                <Input
-                                    keyboardType='email-address'
-                                    onChangeText={email => this.setState({ email })} />
-                            </Item>
-                            <Item floatingLabel style={{
-                                marginHorizontal: 20
-                            }}>
-                                <Label>Password</Label>
-                                <Input
-                                    secureTextEntry={true}
-                                    onChangeText={password => this.setState({ password })}
-                                />
-                            </Item>
-                            <Button success rounded style={{
-                                marginHorizontal: 20,
-                                marginVertical: 20,
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }}
-                                onPress={() => this.login(data)}
-                            >
-                                <Text style={{
-                                    width: '100%',
-                                    textAlign: 'center'
-                                }}>Login</Text>
-                            </Button>
-                        </Form>
-                    </Card>
-                </Content>
-                <Text style={{ marginVertical: 20, fontFamily: 'sans-serif', color: 'teal', fontSize: 10, textAlign: 'center' }}>Powered by: React Native</Text>
-            </Container>
+            <View
+                style={{
+                    flex: 1,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    margin: 0,
+                    backgroundColor: '#85b555'
+                }}>
+                <Text style={{ fontWeight: 'bold', fontSize: 24, color: 'white' }}>Login</Text>
+                <Form style={{
+                    marginHorizontal: 30
+                }}>
+                    <Item rounded style={{ marginVertical: 20 }}>
+                        <Input
+                            style={{ marginHorizontal: 20, color: 'white' }}
+                            keyboardType='email-address'
+                            onChangeText={email => this.setState({ email: email })}
+                            placeholder="email..."
+                            placeholderTextColor='white'
+                        />
+                    </Item>
+                    <Item rounded>
+                        <Input
+                            style={{ marginHorizontal: 20, color: 'white' }}
+                            secureTextEntry={true}
+                            onChangeText={password => this.setState({ password: password })}
+                            placeholder="password..."
+                            placeholderTextColor='white'
+                        />
+                    </Item>
+                    <Button success rounded style={{
+                        marginVertical: 20,
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}
+                        onPress={() => this.login(data)}
+                    >
+                        <Text style={{
+                            width: '100%',
+                            textAlign: 'center'
+                        }}>Login</Text>
+                    </Button>
+                </Form>
+                <View>
+                    <Text style={{ fontFamily: 'sans-serif', color: 'white', fontSize: 10, textAlign: 'center' }}>Dont have account? Register</Text><TouchableOpacity
+                        onPress={
+                            () => this.props.navigation.navigate('Register')
+                        }
+                    ><Text
+                        style={{
+                            fontFamily: 'sans-serif', color: 'white',
+                            textAlign: 'center',
+                            fontWeight: 'bold',
+                            textDecorationLine: 'underline'
+                        }}
+                    >Here!</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         )
     }
 }
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        marginHorizontal: 20
-    },
-    imgCenter: {
-        width: 250,
-        height: 100,
-        margin: 0
-    }
-})
 
 const mapStateToProps = state => {
     return {

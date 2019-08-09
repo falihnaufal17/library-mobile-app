@@ -29,6 +29,9 @@ const AppNavigator = createStackNavigator(
                 header: null
             }
         }
+    },
+    {
+        initialRouteName: 'Register'
     }
 )
 export default createAppContainer(AppNavigator)
