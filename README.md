@@ -1,4 +1,4 @@
-<h1 align="center">Shopee Clone</h1>
+<h1 align="center">Libraryku App</h1>
 <p align="center">
   <img width="250" src="./src/assets/logo/logo.png"/>
 </p>
@@ -47,10 +47,7 @@ The purpose of this application is for people to borrow books online and easily
 <div align="center">
     <img width="250" src="./src/assets/Screenshot_2019-08-30-18-22-14-601_com.applibrary.png">    
     <img width="250" src="./src/assets/Screenshot_2019-08-30-18-22-52-889_com.applibrary.png">
-    <img width="250" src="./src/assets/Screenshot_2019-08-30-18-23-03-915_com.applibrary.png">
-    <img width="250" src="./src/assets/Screenshot_2019-08-30-18-23-11-846_com.applibrary.png">
     <img width="250" src="./src/assets/Screenshot_2019-08-30-18-23-49-105_com.applibrary.png">
-    <img width="250" src="./src/assets/Screenshot_2019-08-30-18-23-36-473_com.applibrary.png">
     <img width="250" src="./src/assets/Screenshot_2019-08-30-18-24-41-195_com.applibrary.png">
 </div>
 
