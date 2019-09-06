@@ -65,7 +65,7 @@ The purpose of this application is for people to borrow books online and easily
   <table>
     <tr>
       <td align="center">
-        <a href="https://github.com/andreferi3">
+        <a href="https://github.com/falihnaufal17">
           <img width="100" src="./src/assets/IMG_20190526_225658_674.jpg" alt="Andre Feri Saputra"><br/>
           <sub><b>Falih Naufal</b></sub>
         </a>
